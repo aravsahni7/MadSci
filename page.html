@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAD_SCIENCE.LOG &mdash; Winter 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--black:#050a05;--dark:#080f08;--surface:#0b160b;--surface2:#0f1f0f;--g900:#0d2b0d;--g800:#0f3a0f;--g700:#164d16;--g600:#1e6e1e;--g500:#2a9a2a;--g400:#39c439;--g300:#52e052;--g200:#7aed7a;--g100:#adf5ad;--amber:#ffb000;--red:#ff3a3a;--border:#153515;--font-mono:'Share Tech Mono',monospace;--font-vt:'VT323',monospace;--font-body:'Courier Prime','Courier New',monospace;--sidebar-w:252px;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--g300);font-family:var(--font-mono);font-size:14px;display:flex;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,0) 0px,rgba(0,0,0,0) 1px,rgba(0,10,0,0.15) 1px,rgba(0,10,0,0.15) 2px);pointer-events:none;z-index:9000;}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,0.5) 100%);pointer-events:none;z-index:9001;}
+@keyframes blink{50%{opacity:0;}}
+@keyframes scanline{0%{transform:translateY(-100%);}100%{transform:translateY(100vh);}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+@keyframes glow{0%,100%{text-shadow:0 0 6px var(--g400),0 0 12px var(--g700);}50%{text-shadow:0 0 12px var(--g300),0 0 28px var(--g500),0 0 50px var(--g800);}}
+@keyframes flicker{0%,100%{opacity:1;}92%{opacity:1;}92.5%{opacity:0.92;}93%{opacity:1;}96%{opacity:1;}96.4%{opacity:0.88;}96.8%{opacity:1;}}
+.scanline{position:fixed;top:0;left:0;right:0;height:3px;background:linear-gradient(180deg,transparent,rgba(52,224,52,0.05),transparent);animation:scanline 7s linear infinite;pointer-events:none;z-index:9002;}
+#sidebar{width:var(--sidebar-w);min-height:100vh;background:var(--dark);border-right:1px solid var(--border);position:fixed;top:0;left:0;display:flex;flex-direction:column;z-index:100;animation:flicker 9s infinite;}
+.sb-top{padding:20px 18px 14px;border-bottom:1px solid var(--border);}
+.sb-logo{font-size:10px;color:var(--g700);letter-spacing:2px;margin-bottom:10px;}
+.sb-title{font-family:var(--font-vt);font-size:28px;color:var(--g200);line-height:1.1;animation:glow 4s ease-in-out infinite;}
+.sb-meta{margin-top:10px;font-size:11px;color:var(--g700);line-height:1.7;}
+.sb-meta span{color:var(--g500);}
+nav{flex:1;overflow-y:auto;padding:8px 0;}
+nav::-webkit-scrollbar{width:3px;}
+nav::-webkit-scrollbar-thumb{background:var(--g800);}
+.ng{font-size:10px;color:var(--g800);letter-spacing:2px;padding:12px 18px 4px;text-transform:uppercase;}
+nav a{display:flex;align-items:center;gap:10px;padding:7px 18px;color:var(--g700);text-decoration:none;font-size:12px;font-family:var(--font-mono);border-left:2px solid transparent;transition:all .1s;cursor:pointer;letter-spacing:.5px;position:relative;}
+nav a:hover{color:var(--g300);background:var(--g900);}
+nav a.active{color:var(--g200);border-left-color:var(--g300);background:rgba(52,196,52,0.06);}
+.ni{width:14px;text-align:center;font-size:12px;flex-shrink:0;}
+.sb-foot{padding:12px 18px;border-top:1px solid var(--border);font-size:10px;color:var(--g700);display:flex;align-items:center;gap:8px;}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--g400);box-shadow:0 0 6px var(--g400);animation:blink 2s step-end infinite;flex-shrink:0;}
+#main{margin-left:var(--sidebar-w);flex:1;min-height:100vh;animation:flicker 9s infinite;width:calc(100% - var(--sidebar-w));min-width:0;}
+.topbar{border-bottom:1px solid var(--border);padding:9px 40px;display:flex;align-items:center;justify-content:space-between;background:var(--dark);position:sticky;top:0;z-index:50;}
+.tb-path{font-size:11px;color:var(--g700);letter-spacing:1px;}
+.tb-path .act{color:var(--g400);}
+.tb-time{font-size:11px;color:var(--g700);}
+.page{display:none;padding:36px 40px 60px;width:100%;animation:fadeUp .25s ease;position:relative;}
+.page.active{display:block;}
+#page-title.active{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;min-height:calc(100vh - 37px);}
+.pg-prompt{font-size:11px;color:var(--g700);letter-spacing:2px;margin-bottom:6px;}
+.pg-prompt::before{content:'$ ';color:var(--g500);}
+.pg-title{font-family:var(--font-vt);font-size:46px;color:var(--g200);line-height:1;margin-bottom:4px;text-shadow:0 0 20px var(--g700);}
+.pg-sub{font-size:11px;color:var(--g700);margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border);letter-spacing:.5px;}
+.pg-sub .dm{color:var(--g800);}
+.tbox{background:var(--surface);border:1px solid var(--border);margin-bottom:20px;}
+.tbox-hdr{display:flex;align-items:center;justify-content:space-between;padding:7px 14px;border-bottom:1px solid var(--border);background:var(--dark);}
+.tbox-ttl{font-size:11px;color:var(--g600);letter-spacing:1.5px;text-transform:uppercase;}
+.badge{font-size:10px;padding:2px 8px;border:1px solid;letter-spacing:1px;}
+.badge.prose{color:var(--amber);border-color:#3a2800;}
+.badge.drama{color:var(--red);border-color:#3a0a0a;}
+.tbox-body{padding:18px 20px;}
+.t-block{font-family:var(--font-body);font-size:15px;line-height:1.85;color:var(--g200);}
+.t-meta{display:flex;gap:16px;align-items:center;margin-bottom:12px;flex-wrap:wrap;}
+.t-src{font-size:13px;color:var(--g500);font-style:italic;font-family:var(--font-body);flex:1;}
+.t-date{font-size:11px;color:var(--g700);flex-shrink:0;}
+.qblock{border-left:2px solid var(--g600);padding:18px 20px 14px;margin-bottom:16px;background:var(--surface);position:relative;}
+.qblock::before{content:'\201C';position:absolute;top:-4px;left:10px;font-family:var(--font-vt);font-size:36px;color:var(--g800);line-height:1;}
+.qt{font-family:var(--font-body);font-style:italic;font-size:15px;color:var(--g100);line-height:1.7;margin-bottom:8px;padding-left:8px;}
+.qs{font-size:11px;color:var(--g700);font-family:var(--font-mono);padding-left:8px;margin-bottom:8px;}
+.qe{font-size:13px;color:var(--g600);font-family:var(--font-body);padding-left:8px;line-height:1.6;border-top:1px solid var(--border);padding-top:8px;margin-top:4px;}
+.pop-row{display:grid;grid-template-columns:56px 1fr;gap:16px;align-items:flex-start;border:1px solid var(--border);background:var(--surface);padding:16px;margin-bottom:12px;}
+.pop-icon{width:56px;height:56px;background:var(--g900);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:22px;}
+.pop-type{font-size:10px;color:var(--g700);letter-spacing:2px;margin-bottom:4px;}
+.pop-name{font-family:var(--font-vt);font-size:20px;color:var(--g200);margin-bottom:6px;}
+.pop-note{font-size:13px;color:var(--g500);line-height:1.7;font-family:var(--font-body);}
+.art-wrap{border:1px solid var(--border);background:var(--surface);margin-bottom:20px;}
+.art-bar{padding:6px 16px;background:var(--dark);border-bottom:1px solid var(--border);font-size:10px;color:var(--g700);letter-spacing:1.5px;display:flex;justify-content:space-between;}
+.art-bar span{color:var(--g500);}
+.art-body{padding:18px 18px 14px;}
+.art-hed{font-family:var(--font-vt);font-size:24px;color:var(--g200);margin-bottom:12px;line-height:1.2;}
+.art-sum{font-size:14px;color:var(--g400);line-height:1.8;font-family:var(--font-body);}
+.mla-line{margin-top:12px;padding-top:10px;border-top:1px solid var(--border);font-size:10px;color:var(--g800);font-family:var(--font-mono);}
+.mla-block{background:var(--surface);border:1px solid var(--border);margin-bottom:8px;padding:14px 18px;}
+.mla-entry{font-family:var(--font-body);font-size:13px;color:var(--g400);line-height:1.9;padding-left:24px;text-indent:-24px;}
+.def-box{background:var(--surface);border:1px solid var(--border);padding:28px 30px;margin-bottom:20px;}
+.def-term{font-family:var(--font-vt);font-size:32px;color:var(--g200);margin-bottom:4px;letter-spacing:2px;}
+.def-pos{font-size:11px;color:var(--g700);letter-spacing:2px;margin-bottom:16px;font-family:var(--font-mono);}
+.def-body{font-family:var(--font-body);font-size:15px;line-height:1.9;color:var(--g400);}
+.def-body p{margin-bottom:14px;}
+.boot{font-size:12px;color:var(--g700);line-height:2.1;margin-bottom:28px;font-family:var(--font-mono);}
+.boot .ok{color:var(--g500);}
+.boot .warn{color:var(--amber);}
+.big-t{font-family:var(--font-vt);font-size:72px;color:var(--g200);line-height:.95;margin-bottom:8px;text-shadow:0 0 30px var(--g600),0 0 60px var(--g800);}
+.big-s{font-family:var(--font-vt);font-size:24px;color:var(--g600);margin-bottom:36px;letter-spacing:2px;}
+.info-tbl{width:100%;max-width:480px;border-collapse:collapse;margin-bottom:36px;}
+.info-tbl td{padding:9px 14px;border:1px solid var(--border);font-size:13px;vertical-align:top;}
+.info-tbl td:first-child{color:var(--g700);width:38%;background:var(--dark);font-size:10px;letter-spacing:1.5px;padding-top:11px;}
+.info-tbl td:last-child{color:var(--g200);background:var(--surface);font-family:var(--font-body);}
+.cursor{display:inline-block;width:10px;height:18px;background:var(--g300);vertical-align:middle;animation:blink 1s step-end infinite;box-shadow:0 0 8px var(--g300);}
+.placeholder-box{border:1px solid var(--border);background:var(--surface);padding:60px 30px;margin-bottom:12px;text-align:center;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--dark);}
+::-webkit-scrollbar-thumb{background:var(--g900);}
+::-webkit-scrollbar-thumb:hover{background:var(--g700);}
+.pop-icon img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+/* BINARY WATERFALL */
+.binary-waterfall {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 28%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+.binary-stream {
+  position: absolute;
+  top: -100%;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 14px;
+  color: var(--g400);
+  white-space: pre;
+  animation: fall linear infinite;
+  animation-fill-mode: forwards; /* <--- add this */
+}
+
+.binary-stream:nth-child(1) { right: 5%; animation-duration: 8s; }
+.binary-stream:nth-child(2) { right: 30%; animation-duration: 10s; }
+.binary-stream:nth-child(3) { right: 55%; animation-duration: 7s; }
+.binary-stream:nth-child(4) { right: 80%; animation-duration: 11s; }
+
+@keyframes fall {
+  0% { top: -100%; }
+  100% { top: 100%; }
+}
+
+@media(max-width:720px){:root{--sidebar-w:200px;}.page{padding:24px 20px 48px;}.big-t{font-size:48px;}}
+</style>
+</head>
+<body>
+<div class="scanline"></div>
+
+<aside id="sidebar">
+  <div class="sb-top">
+    <div class="sb-logo">// MAD_SCIENCE.LOG v1.0</div>
+    <div class="sb-title">SCRAP<br>BOOK</div>
+    <div class="sb-meta"><span>COURSE:</span> ENG 603-200-AB<br><span>TERM:</span> Winter 2026<br><span>INSTR:</span> Dr. McDermott</div>
+  </div>
+  <nav>
+    <div class="ng">// COVER</div>
+    <a class="active" onclick="go('title',this)"><span class="ni">&#x2B21;</span>title_page.txt</a>
+    <div class="ng">// JOURNAL</div>
+    <a onclick="go('journal',this)"><span class="ni">&gt;</span>journal_entries.txt</a>
+    <a onclick="go('quotes',this)"><span class="ni">&ldquo;</span>quotes.dat</a>
+    <div class="ng">// CREATIVE</div>
+    <a onclick="go('creative',this)"><span class="ni">&#x25A6;</span>comics.strip</a>
+    <div class="ng">// RESEARCH</div>
+    <a onclick="go('popculture',this)"><span class="ni">&#x25CE;</span>pop_culture.ref</a>
+    <a onclick="go('article',this)"><span class="ni">&#x25A4;</span>article.db</a>
+    <a onclick="go('mla',this)"><span class="ni">&sect;</span>works_cited.mla</a>
+    <div class="ng">// DEFINITION</div>
+    <a onclick="go('definition',this)"><span class="ni">&#x2726;</span>mad_science.def</a>
+  </nav>
+  <div class="sb-foot"><div class="dot"></div>Winter 2026</div>
+</aside>
+
+<main id="main">
+  <div class="topbar">
+    <div class="tb-path">~/scrapbook/<span class="act" id="crumb">title_page.txt</span></div>
+    <div class="tb-time" id="clock"></div>
+  </div>
+
+  <!-- TITLE PAGE -->
+  <div class="page active" id="page-title">
+    <div class="boot">
+      <div>&gt; INITIALIZING MAD_SCIENCE.LOG .............. <span class="ok">[OK]</span></div>
+      <div>&gt; LOADING SCRAPBOOK KERNEL ................. <span class="ok">[OK]</span></div>
+      <div>&gt; MOUNTING JOURNAL ENTRIES ................ <span class="ok">[OK]</span></div>
+      <div>&gt; CHECKING FOR MONSTERS ................... <span class="warn">[WARNING: FOUND]</span></div>
+      <div>&gt; READY.</div>
+    </div>
+    <div class="big-t">MAD<br>SCIENCE</div>
+    <div class="big-s">A SCIENCE SCRAPBOOK &mdash; WINTER 2026</div>
+    <table class="info-tbl">
+      <tr><td>STUDENT</td><td>Arav Sahni</td></tr>
+      <tr><td>STUDENT NO.</td><td>2468547</td></tr>
+      <tr><td>COURSE</td><td>ENG 603-200-AB</td></tr>
+      <tr><td>INSTRUCTOR</td><td>Dr. Jennifer McDermott</td></tr>
+      <tr><td>THEME</td><td>Software as Mad Science</td></tr>
+    </table>
+    <div style="font-size:12px;color:var(--g800);font-family:var(--font-mono)"><span class="cursor"></span></div>
+        <!-- BINARY WATERFALL -->
+    <div class="binary-waterfall">
+      <div class="binary-stream">
+    01010101010101010101010101010101
+    10101010101010101010101010101010
+    00110011001100110011001100110011
+    11100011100011100011100011100011
+      </div>
+
+      <div class="binary-stream">
+    01101001011011100111010001100101
+    01101100011011000110100101100111
+    01100101011011100110001101100101
+      </div>
+
+      <div class="binary-stream">
+    01000110011100100110000101101110
+    01101011011001010110111001110011
+      </div>
+
+      <div class="binary-stream">
+    01010011011011110110011001110100
+    01110111011000010111001001100101
+      </div>
+    </div>
+  </div>
+
+  <!-- JOURNAL -->
+  <div class="page" id="page-journal">
+    <div class="pg-prompt">vim journal_entries.txt</div>
+    <div class="pg-title">JOURNAL ENTRIES</div>
+    <div class="pg-sub"><span class="dm">200&ndash;250 words each &middot; different genres</span></div>
+    <div class="tbox">
+      <div class="tbox-hdr"><span class="tbox-ttl">ENTRY_001</span><span class="badge prose">PROSE</span></div>
+      <div class="tbox-body">
+        <div class="t-meta"><div class="t-src">Frankenstein &mdash; Mary Shelley</div><div class="t-date">Feb 3, 2026</div></div>
+        <div class="t-block">What hits me about Victor Frankenstein is not the creature he builds, but the way he talks about building it. Shelley paints him as someone drunk on process: the long nights, the accumulating knowledge, the thrill of standing at the edge of discovery. He doesn’t stumble into creation. He constructs it deliberately, step by step, confident that each move is rational even as the whole project slides toward obsession. His lab is a &ldquo;filthy creation,&rdquo; yet he keeps returning, driven by an eagerness that only grows. It reads exactly like software work at 2 a.m.<br><br>The programmer in the night is not acting irrationally. The refactor is necessary. That edge case matters. The test is almost passing. From the outside it might look insane, but every choice has a reason. Victor never has an outside. He is inside the system he built, blind to the larger consequences, only realizing them when the creation stands up and walks away.<br><br>Shelley captures something the software world keeps forgetting: building something well does not equal understanding its impact. Creation without thinking about what it does next is not genius. It is negligence dressed in the language of progress. Victor&rsquo;s crime is not ambition. It is refusing to imagine life after the compile succeeds. The monster is not a mistake. The monster is a release date.</div>
+      </div>
+    </div>
+    <div class="tbox">
+      <div class="tbox-hdr"><span class="tbox-ttl">ENTRY_002</span><span class="badge drama">DRAMA</span></div>
+      <div class="tbox-body">
+        <div class="t-meta"><div class="t-src">The Tragical History of Doctor Faustus &mdash; Christopher Marlowe</div><div class="t-date">Feb 17, 2026</div></div>
+        <div class="t-block">Faustus does not sell his soul for fun. He sells it for access: the ability to ask questions, explore systems, and move through constraints that ordinary people cannot. His ambitions are technical. He wants to wall Germany with brass, make the Rhine circle fair Wertenberg, give students free clothing, conjure coin. These are infrastructure problems, not evil schemes. He signs a twenty-four-year deal with Mephisto that, in 2026 terms, reads like a terms-of-service agreement nobody reads until it’s too late.<br><br>Technology makes this parallel uncomfortable. Every platform that promises power in exchange for data echoes Faustus&rsquo;s bargain. You get control. The clock starts. The cost arrives later, often in ways you cannot predict. The precision of Marlowe&rsquo;s final act is terrifying. Faustus tries to renegotiate a contract he never understood. Mephisto is not a devil. He is a legacy system. Faustus built his life on top of it without reading the documentation.<br><br>This is exactly how software fails. You make a system that works, but the consequences pile up quietly. You do not see them until it is too late. Like Faustus, engineers often trade convenience for power, curiosity for capability, without considering what happens when the clock runs out. The bargain seems worth it at first. The fallout is inevitable.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUOTES -->
+  <div class="page" id="page-quotes">
+    <div class="pg-prompt">grep -i "quote" class_texts.db</div>
+    <div class="pg-title">QUOTES</div>
+    <div class="pg-sub"><span class="dm">Snippets from class texts &mdash; varied selection</span></div>
+
+    <div class="qblock">
+      <div class="qt">&ldquo;Learn from me, if not by my precepts, at least by my example, how dangerous is the acquirement of knowledge, and how much happier that man is who believes his native town to be the world, than he who aspires to become greater than his nature will allow.&rdquo;</div>
+      <div class="qs">Shelley, Mary. <i>Frankenstein</i>. 1818 Text, Third Edition, Edited by D. L. Macdonald and Kathleen Scherf, Broadview Press, p. 80.</div>
+      <div class="qe">Victor speaks this directly to Walton, one obsessive warning another. It stopped me because it is not Shelley moralizing from outside the story; it is Victor himself, having lived the consequences, trying to short-circuit the same hunger he once had. The phrase &ldquo;greater than his nature will allow&rdquo; hits differently when you think about every founder who ever said &ldquo;move fast and break things.&rdquo; The warning is built into the ambition itself.</div>
+    </div>
+
+    <div class="qblock" style="border-left-color:var(--amber)">
+      <div class="qt">&ldquo;In a solitary chamber, or rather cell, at the top of the house&hellip; I kept my workshop of filthy creation; my eyeballs were starting from their sockets in attending to the details of my employment.&rdquo;</div>
+      <div class="qs">Shelley, Mary. <i>Frankenstein</i>. 1818 Text, Third Edition, Edited by D. L. Macdonald and Kathleen Scherf, Broadview Press, p. 81.</div>
+      <div class="qe">This image of Victor literally straining his eyes in a locked room, cut off from everyone, too absorbed to notice seasons changing, is the most honest description of a coding sprint I have read in a nineteenth-century novel. He calls it filthy. He knows. He keeps going anyway. That gap between knowing something is wrong and continuing regardless is what connects Victor to every engineer who has shipped something they were not proud of.</div>
+    </div>
+
+    <div class="qblock" style="border-left-color:var(--g400)">
+      <div class="qt">&ldquo;&lsquo;Tis Magic, Magic that hath ravished me.&rdquo;</div>
+      <div class="qs">Marlowe, Christopher. <i>The Tragical History of Doctor Faustus</i> (A-Text, 1604). “Mad Science” Course Pack 603-200-AB, John Abbott College, Fall 2012, p. 18.</div>
+      <div class="qe">Faustus has just dismissed divinity, law, medicine, and philosophy one by one, not because they are bad disciplines, but because they have ceilings. Magic has no ceiling. I chose this line because it captures the specific appeal of programming to a certain kind of mind: it is not that code is useful, it is that code is the discipline with no obvious limit. That word &ldquo;ravished,&rdquo; a word about being overcome rather than choosing, is precise. It is not enthusiasm. It is capture.</div>
+    </div>
+
+    <div class="qblock" style="border-left-color:var(--g700)">
+      <div class="qt">&ldquo;He had been Eight Years upon a Project for extracting Sun-Beams out of Cucumbers, which were to be put into Vials hermetically sealed, and let out to warm the Air in raw inclement Summers.&rdquo;</div>
+      <div class="qs">Swift, Jonathan. <i>Gulliver’s Travels</i>. Part 3, A Voyage to Laputa, Chapter 5. “Mad Science” Course Pack 603-200-AB, John Abbott College, Fall 2012, p. 48.</div>
+      <div class="qe">Swift&rsquo;s Academy of Lagado is a satire on the Royal Society, but read in 2026 it reads equally well as a satire on Silicon Valley. The cucumber-sunbeam project is perfectly structured like a bad startup pitch: ambitious goal, eight years of runway, no working product, complete confidence that eight more years will do it. The detail of &ldquo;hermetically sealed vials&rdquo; is what makes it brilliant. The scientist has thought carefully about the container but not at all about whether the premise is sound.</div>
+    </div>
+
+    <div class="qblock" style="border-left-color:var(--amber)">
+      <div class="qt">&ldquo;Read not to contradict and confute, nor to believe and take for granted, nor to find talk and discourse, but to weigh and consider.&rdquo;</div>
+      <div class="qs">Bacon, Francis. “Of Studies.” <i>Essays</i>. “Mad Science” Course Pack 603-200-AB, John Abbott College, Fall 2012, p. 5.</div>
+      <div class="qe">I included this because it sits in productive tension with everything else in the scrapbook. Bacon is describing exactly the kind of slow, deliberate, critical engagement with knowledge that Victor Frankenstein and Faustus both fail to practise. Both read to confirm, not to question. Victor reads natural philosophy until he is &ldquo;ravished&rdquo; by it; Faustus reads until magic has already decided his fate. Bacon&rsquo;s essay is the antidote to both, and neither of them takes it.</div>
+    </div>
+
+  </div>
+
+  <!-- COMIC -->
+  <div class="page" id="page-creative">
+    <div class="pg-prompt">open comics.strip</div>
+    <div class="pg-title">COMIC</div>
+    <div class="pg-sub">
+      <span class="dm">Original work &mdash; software as mad science</span>
+    </div>
+
+    <!-- IMAGE -->
+    <div style="display:flex;justify-content:center;margin:20px 0;">
+      <img 
+        src="comic.jpg"
+        alt="Comic Strip"
+        style="
+          max-width:100%;
+          height:auto;
+          border:2px solid var(--g300);
+          border-radius:8px;
+          box-shadow:0 8px 20px rgba(0,0,0,0.15);
+        ">
+    </div>
+
+    <!-- CREDIT -->
+    <div style="
+      text-align:center;
+      font-family:var(--font-mono);
+      font-size:11px;
+      color:var(--g700);
+      margin-bottom:12px;
+      letter-spacing:1px;
+    ">
+      original comic made by Arav Sahni
+    </div>
+
+    <!-- DESCRIPTION -->
+    <div style="
+      font-size:11px;
+      color:var(--g700);
+      font-family:var(--font-mono);
+      padding:8px 4px;
+    ">
+      Theme: the parallel between Victor Frankenstein&rsquo;s creation and a software deployment that escapes its creator&rsquo;s control.
+    </div>
+  </div>
+
+  <!-- POP CULTURE -->
+  <div class="page" id="page-popculture">
+    <div class="pg-prompt">grep -r "mad_science" /media/popular/</div>
+    <div class="pg-title">POP CULTURE</div>
+    <div class="pg-sub"><span class="dm">Mad science in popular culture</span></div>
+    <div class="pop-row">
+      
+      <div class="pop-icon">
+        <img src="https://m.media-amazon.com/images/M/MV5BYTg0YmNiOWItODZmMi00N2JkLTg4YmMtN2JkOWNjZDBmN2QwXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" alt="Mr. Robot" />
+      </div>
+
+      <div>
+        <div class="pop-type">TELEVISION SERIES</div>
+        <div class="pop-name">Mr. Robot (2015&ndash;2019)</div>
+        <div class="pop-note">
+          Elliot Alderson works in the same obsessive space as Victor Frankenstein. He believes in his method so completely that he cannot see the damage building around him. Where Frankenstein is obsessed with biology, Elliot is obsessed with systems. He wants to rewrite global finance and pursues it with the same sleepless, tunnel-vision focus Shelley gives her protagonist. Elliot doesn’t see himself as a criminal. He sees himself as a scientist fixing a broken experiment. Frankenstein sees himself the same way: following reason, blind to the consequences of his creation. Both are undone not by others but by what they set in motion. Elliot, like Faustus, makes a deal with forces larger than himself and the cost of that deal unfolds over time. When he realizes what he has unleashed, it is pure horror. He cannot control what he started.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<!-- ARTICLE -->
+    <div class="page" id="page-article">
+        <div class="pg-prompt">fetch article.db</div>
+        <div class="pg-title">SCIENCE ARTICLE</div>
+        <div class="pg-sub"><span class="dm">Peer-reviewed article — ACM FAccT 2022</span></div>
+        <div class="art-wrap">
+            <div class="art-bar"><span>SOURCE: ACM Conference on Fairness, Accountability, and Transparency</span><span>2022</span></div>
+            <div class="art-body">
+                <div class="art-hed">Taxonomy of Risks Posed by Language Models</div>
+                <div class="art-sum">
+                    This peer-reviewed article, published in the ACM FAccT 2022 proceedings by Weidinger et al., lays out a clear breakdown of the harms that large language models can cause. The authors, a team of AI safety researchers, identify six main types of risks: discrimination and representational harms, information hazards, misinformation, malicious uses, human-computer interaction issues, and environmental and socioeconomic impacts. They organize 21 specific risks and explain how they happen, give evidence, and suggest ways to reduce them. This connects to our class discussion in the same way Shelley’s <em>Frankenstein</em> does: the harms often come from the system working as designed, not from anyone trying to be bad. Each choice makes sense on its own, but together they can cause serious unintended problems. The authors also point out an “evaluation gap,” where developers underestimate what will happen once these models are deployed—just like Victor Frankenstein didn’t imagine the effects of his creation.
+                </div>
+                <div class="mla-line">
+                    Weidinger, Laura, et al. “Taxonomy of Risks Posed by Language Models.” <em>Proceedings of the ACM on Fairness, Accountability, and Transparency (FAccT)</em>, 2022, pp. 214–229. https://doi.org/10.1145/3531146.3533088
+            </div>
+            </div>
+        </div>
+  </div>
+
+  <!-- WORKS CITED -->
+  <div class="page" id="page-mla">
+    <div class="pg-prompt">cat works_cited.mla</div>
+    <div class="pg-title">WORKS CITED</div>
+    <div class="pg-sub"><span class="dm">MLA format &middot; alphabetical by author last name</span></div>
+    <div style="font-family:var(--font-vt);font-size:22px;color:var(--g300);margin-bottom:20px;letter-spacing:2px;">Works Cited</div>
+
+    <div class="mla-block">
+      <div class="mla-entry">
+        Bacon, Francis. &ldquo;Of Studies.&rdquo; <em>The Essays or Counsels, Civil and Moral</em>. 
+        Reprinted in <em>Mad Science</em>, John Abbott College, Fall 2012, pp. 5&ndash;6.
+      </div>
+    </div>
+
+    <div class="mla-block">
+      <div class="mla-entry">
+        Esmail, Sam, creator. <em>Mr. Robot</em>. USA Network, 2015&ndash;2019.
+      </div>
+    </div>
+
+    <div class="mla-block">
+      <div class="mla-entry">
+        Marlowe, Christopher. <em>The Tragical History of Doctor Faustus</em> (A-Text, 1604). 
+        Reprinted in <em>Mad Science</em>, John Abbott College, Fall 2012, pp. 14&ndash;26.
+      </div>
+    </div>
+
+    <div class="mla-block">
+      <div class="mla-entry">
+        McDermott, Jennifer. <em>Mad Science</em>. John Abbott College, Fall 2012.
+      </div>
+    </div>
+
+    <div class="mla-block">
+      <div class="mla-entry">
+        Shelley, Mary. <em>Frankenstein: The 1818 Text</em>. Edited by D. L. Macdonald and Kathleen Scherf, Broadview Press, 2012.
+      </div>
+    </div>
+
+    <div class="mla-block">
+      <div class="mla-entry">
+        Swift, Jonathan. <em>Gulliver&rsquo;s Travels</em>. Part 3, A Voyage to Laputa, Chapter 5. 
+        Reprinted in <em>Mad Science</em>, John Abbott College, Fall 2012, pp. 41&ndash;51.
+      </div>
+    </div>
+
+    <div class="mla-block">
+      <div class="mla-entry">
+        Weidinger, Laura, et al. &ldquo;Taxonomy of Risks Posed by Language Models.&rdquo; 
+        <em>Proceedings of the ACM on Fairness, Accountability, and Transparency (FAccT)</em>, 
+        2022, pp. 214&ndash;229. https://doi.org/10.1145/3531146.3533088.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- DEFINITION -->
+  <div class="page" id="page-definition">
+    <div class="pg-prompt">cat mad_science.def</div>
+    <div class="pg-title">MAD SCIENCE</div>
+    <div class="pg-sub"><span class="dm">A personal definition &mdash; ENG 603-200-AB</span></div>
+    <div class="def-box">
+      <div class="def-term">mad science</div>
+      <div class="def-pos">// my working definition</div>
+      <div class="def-body">
+        <p>Mad science is not really about danger. It is a failure of attention. You get so focused on making something work that you stop asking what it will do. Like Victor in Frankenstein, the process becomes the goal. The real problem is the gap between building something well and thinking about what it actually does. </p>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+
+const crumbs={title:'title_page.txt',journal:'journal_entries.txt',quotes:'quotes.dat',creative:'comics.strip',popculture:'pop_culture.ref',article:'article.db',mla:'works_cited.mla',definition:'mad_science.def'};
+function go(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('nav a').forEach(a=>a.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  el.classList.add('active');
+  document.getElementById('crumb').textContent=crumbs[id]||id;
+  window.scrollTo(0,0);
+}
+function tick(){const n=new Date();document.getElementById('clock').textContent=n.toLocaleTimeString('en-CA',{hour12:false})+' // '+n.toLocaleDateString('en-CA');}
+tick();setInterval(tick,1000);
+</script>
+</body>
+</html>
